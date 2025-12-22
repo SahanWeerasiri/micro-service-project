@@ -1,0 +1,46 @@
+name: Deploy to Production (Docker)
+
+on:
+    push:
+        branches:
+            - master
+        paths:
+            - "server/**"
+            - "client/**"
+            - "docker-compose.yml"
+            - "**/Dockerfile"
+            - ".github/workflows/production.yml"
+    workflow_dispatch:
+
+jobs:
+    deploy:
+        name: Deploy with Docker Compose
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Setup SSH
+              run: |
+                  mkdir -p ~/.ssh
+                  echo "${{ secrets.DEPLOY_SSH_KEY }}" | base64 --decode > ~/.ssh/deploy_key
+                  chmod 600 ~/.ssh/deploy_key
+                  ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+
+            - name: Pull and Deploy
+              run: |
+                  ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+                    ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
+
+                  cd /home/ubuntu/micro-service-project && git pull origin master && docker-compose up -d --build
+
+                  echo "⏳ Waiting for services to start..."
+                  sleep 5
+
+                  echo "✅ Deployment complete!"
+                  echo "📊 Container status:"
+                  docker-compose ps
+
+                  EOF
+
+            - name: Cleanup SSH Key
+              if: always()
+              run: rm -f ~/.ssh/deploy_key
