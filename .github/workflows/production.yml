@@ -35,7 +35,7 @@ jobs:
                   cp /home/ubuntu/micro-service-project/service-key.json /home/ubuntu/micro-service-project/auth-service/service-key.json
                   cp /home/ubuntu/micro-service-project/service-key.json /home/ubuntu/micro-service-project/merchant-service/service-key.json
                   cp /home/ubuntu/micro-service-project/service-key.json /home/ubuntu/micro-service-project/consumer-service/service-key.json
-                  cd /home/ubuntu/micro-service-project && && docker-compose up -d --build && docker-compose up -d nginx
+                  cd /home/ubuntu/micro-service-project && docker-compose up -d --build && docker-compose up -d nginx
 
                   echo "⏳ Waiting for services to start..."
                   sleep 5
