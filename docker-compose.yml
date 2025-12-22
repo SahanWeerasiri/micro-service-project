@@ -36,6 +36,7 @@ services:
       - merchant-service
       - consumer-service
       - log-service
+      - mysql-db
     networks:
       - micro-net
 networks:
