@@ -31,8 +31,11 @@ jobs:
                     ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
 
                   cd /home/ubuntu/micro-service-project && docker-compose down
-                  cd /home/ubuntu/micro-service-project && git pull origin master && docker-compose up -d --build
-                  cd /home/ubuntu/micro-service-project && docker-compose up -d nginx
+                  cd /home/ubuntu/micro-service-project && git pull origin master --no-rebase 
+                  cp /home/ubuntu/micro-service-project/service-key.json /home/ubuntu/micro-service-project/auth-service/service-key.json
+                  cp /home/ubuntu/micro-service-project/service-key.json /home/ubuntu/micro-service-project/merchant-service/service-key.json
+                  cp /home/ubuntu/micro-service-project/service-key.json /home/ubuntu/micro-service-project/consumer-service/service-key.json
+                  cd /home/ubuntu/micro-service-project && && docker-compose up -d --build && docker-compose up -d nginx
 
                   echo "⏳ Waiting for services to start..."
                   sleep 5
