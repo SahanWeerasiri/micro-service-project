@@ -4,12 +4,15 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 // Register endpoint
 router.post('/register', authController.register);
 // Login endpoint
 router.post('/login', authController.login);
-// Verify endpoint
-router.get('/verify', authController.verify);
+// Logout endpoint (protected)
+router.post('/logout', authMiddleware, authController.logout);
+// Verify token endpoint (protected)
+router.post('/verify', authMiddleware, authController.verifyToken);
 
 module.exports = router;
