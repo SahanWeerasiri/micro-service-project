@@ -30,6 +30,7 @@ jobs:
                   ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
                     ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
 
+                  cd /home/ubuntu/micro-service-project && docker-compose down
                   cd /home/ubuntu/micro-service-project && git pull origin master && docker-compose up -d --build
                   cd /home/ubuntu/micro-service-project && docker-compose up -d nginx
 
