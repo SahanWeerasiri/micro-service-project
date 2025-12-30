@@ -55,8 +55,8 @@ send_log() {
     local timestamp
     timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     
-    # Escape JSON special characters
-    message=$(echo "$message" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\n/\\n/g; s/\r/\\r/g; s/\t/\\t/g')
+    # Escape JSON special characters - FIXED
+    message=$(echo "$message" | jq -R -s . | sed 's/^"//;s/"$//')
     
     # Create JSON payload
     local payload
@@ -82,8 +82,11 @@ send_log() {
             token: $token
         }')
     
-    # Try to send via websocat (non-blocking)
-    echo "$payload" | timeout 0.5 websocat "$SERVER_URL/ws/$RUN_ID" 2>/dev/null || true
+    # Try to send via websocat with timeout - FIXED
+    echo "$payload" | timeout 5 websocat "$SERVER_URL/ws/$RUN_ID" 2>/dev/null || {
+        # Log connection failure locally
+        echo "[CI-AGENT DEBUG] Failed to send log to $SERVER_URL/ws/$RUN_ID" >&2
+    }
 }
 
 # Execute command with real-time logging
